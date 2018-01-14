@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Mood chart</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style type="text/css">
+      #login, #loggedin {
+        display: none;
+      }
+      a {
+        display: none !important;
+      }
+      .text-overflow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 500px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/gauge.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+    <script>
+        let moods = {
+          happy: 70,
+          focused: 10,
+          angry: 20
+        };
+
+        let gaugeChart = AmCharts.makeChart("chartdiv", {
+          "type": "gauge",
+          "theme": "light",
+          "axes": [{
+            "axisAlpha": 0,
+            "tickAlpha": 0,
+            "labelsEnabled": false,
+            "startValue": 0,
+            "endValue": 100,
+            "startAngle": 0,
+            "endAngle": 270,
+            "bands": [{
+              "color": "#eee",
+              "startValue": 0,
+              "endValue": 100,
+              "radius": "100%",
+              "innerRadius": "85%"
+            }, {
+              "color": "#84b761",
+              "startValue": 0,
+              "endValue": moods.happy, //percentage happy
+              "radius": "100%",
+              "innerRadius": "85%",
+              "balloonText": `${moods.happy}%`
+            }, {
+              "color": "#eee",
+              "startValue": 0,
+              "endValue": 100,
+              "radius": "80%",
+              "innerRadius": "65%"
+            }, {
+              "color": "#fdd400",
+              "startValue": 0,
+              "endValue": moods.focused, //percentage anxious
+              "radius": "80%",
+              "innerRadius": "65%",
+              "balloonText": `${moods.focused}%`
+            }, {
+              "color": "#eee",
+              "startValue": 0,
+              "endValue": 100,
+              "radius": "60%",
+              "innerRadius": "45%"
+            }, {
+              "color": "#cc4748",
+              "startValue": 0,
+              "endValue": moods.angry, //percentage angry
+              "radius": "60%",
+              "innerRadius": "45%",
+              "balloonText": `${moods.angry}%`
+            }]
+          }],
+          "allLabels": [{
+            "text": "Happy",
+            "x": "49%",
+            "y": "5%",
+            "size": 15,
+            "bold": true,
+            "color": "#84b761",
+            "align": "right"
+          }, {
+            "text": "Focused",
+            "x": "49%",
+            "y": "15%",
+            "size": 15,
+            "bold": true,
+            "color": "#fdd400",
+            "align": "right"
+          }, {
+            "text": "Angry",
+            "x": "49%",
+            "y": "24%",
+            "size": 15,
+            "bold": true,
+            "color": "#cc4748",
+            "align": "right"
+          }],
+          "export": {
+            "enabled": true
+          }
+        });
+
+        window.setInterval(() => {
+          fetch('http://tormod9465.cloudapp.net/api/v1.0/mood_levels', {
+          // fetch('http://localhost:5000/api/v1.0/mood_levels', {
+              method: 'get'
+          })
+          .then(response => response.json())
+          .then(data => {
+            let ChartData = document.getElementById("chartdiv").innerHTML;
+
+            gaugeChart.axes[0].bands[1].endValue = data.moods.happy;
+            gaugeChart.axes[0].bands[1].balloonText = `${data.moods.happy}%`;
+
+            gaugeChart.axes[0].bands[3].endValue = data.moods.focused;
+            gaugeChart.axes[0].bands[3].balloonText = `${data.moods.focused}%`;
+
+            gaugeChart.axes[0].bands[5].endValue = data.moods.angry;
+            gaugeChart.axes[0].bands[5].balloonText = `${data.moods.angry}%`;
+
+            gaugeChart.validateData();
+          })
+          .catch(function(err) {
+              // Error :(
+          });
+        }, 2000);
+
+    </script>
+
+    <div id="chartdiv" style="width: 100%;
+      height: 500px;
+      margin: auto" />
+  </body>
+</html>
