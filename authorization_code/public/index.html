@@ -31,8 +31,7 @@
     <script>
         let moods = {
           happy: 70,
-          focused: 10,
-          angry: 20
+          angry: 30
         };
 
         let gaugeChart = AmCharts.makeChart("chartdiv", {
@@ -53,7 +52,7 @@
               "radius": "100%",
               "innerRadius": "85%"
             }, {
-              "color": "#84b761",
+              "color": "#3f8d4f",
               "startValue": 0,
               "endValue": moods.happy, //percentage happy
               "radius": "100%",
@@ -66,24 +65,11 @@
               "radius": "80%",
               "innerRadius": "65%"
             }, {
-              "color": "#fdd400",
-              "startValue": 0,
-              "endValue": moods.focused, //percentage anxious
-              "radius": "80%",
-              "innerRadius": "65%",
-              "balloonText": `${moods.focused}%`
-            }, {
-              "color": "#eee",
-              "startValue": 0,
-              "endValue": 100,
-              "radius": "60%",
-              "innerRadius": "45%"
-            }, {
-              "color": "#cc4748",
+              "color": "#7b1323",
               "startValue": 0,
               "endValue": moods.angry, //percentage angry
-              "radius": "60%",
-              "innerRadius": "45%",
+              "radius": "80%",
+              "innerRadius": "65%",
               "balloonText": `${moods.angry}%`
             }]
           }],
@@ -93,23 +79,15 @@
             "y": "5%",
             "size": 15,
             "bold": true,
-            "color": "#84b761",
-            "align": "right"
-          }, {
-            "text": "Focused",
-            "x": "49%",
-            "y": "15%",
-            "size": 15,
-            "bold": true,
-            "color": "#fdd400",
+            "color": "#3f8d4f",
             "align": "right"
           }, {
             "text": "Angry",
             "x": "49%",
-            "y": "24%",
+            "y": "15%",
             "size": 15,
             "bold": true,
-            "color": "#cc4748",
+            "color": "#7b1323",
             "align": "right"
           }],
           "export": {
@@ -119,7 +97,6 @@
 
         window.setInterval(() => {
           fetch('http://tormod9465.cloudapp.net/api/v1.0/mood_levels', {
-          // fetch('http://localhost:5000/api/v1.0/mood_levels', {
               method: 'get'
           })
           .then(response => response.json())
@@ -129,11 +106,8 @@
             gaugeChart.axes[0].bands[1].endValue = data.moods.happy;
             gaugeChart.axes[0].bands[1].balloonText = `${data.moods.happy}%`;
 
-            gaugeChart.axes[0].bands[3].endValue = data.moods.focused;
-            gaugeChart.axes[0].bands[3].balloonText = `${data.moods.focused}%`;
-
-            gaugeChart.axes[0].bands[5].endValue = data.moods.angry;
-            gaugeChart.axes[0].bands[5].balloonText = `${data.moods.angry}%`;
+            gaugeChart.axes[0].bands[3].endValue = data.moods.angry;
+            gaugeChart.axes[0].bands[3].balloonText = `${data.moods.angry}%`;
 
             gaugeChart.validateData();
           })
